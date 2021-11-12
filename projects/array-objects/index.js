@@ -90,7 +90,7 @@ function upperProps(obj) {
  */
 function createProxy(obj) {
   const handler = {
-    get(obj, prop) {
+    get(obj, prop, val, rec) {
       if (prop in obj) {
         return obj[prop] ** 2;
       }
