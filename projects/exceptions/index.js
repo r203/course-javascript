@@ -98,9 +98,7 @@ function returnBadArguments(fn, ...args) {
 
   for (let i = 1; i < arguments.length; i++) {
     try {
-      if (fn(arguments[i])) {
-        throw new Error();
-      }
+      fn(arguments[i]);
     } catch (e) {
       arrayWithError.push(arguments[i]);
     }
