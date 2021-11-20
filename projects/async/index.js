@@ -39,7 +39,27 @@ const homeworkContainer = document.querySelector('#app');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {}
+function loadTowns() {
+  const url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
+
+  return fetch(url)
+    .then((response) => {
+      const json = response.json();
+      return json;
+    })
+    .then((towns) => {
+      towns.sort((a, b) => {
+        if (a.name > b.name) {
+          return 1;
+        }
+        if (a.name < b.name) {
+          return -1;
+        }
+        return 0;
+      });
+      return towns;
+    });
+}
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -52,7 +72,9 @@ function loadTowns() {}
    isMatching('Moscow', 'SCO') // true
    isMatching('Moscow', 'Moscov') // false
  */
-function isMatching(full, chunk) {}
+function isMatching(full, chunk) {
+  return full.toLowerCase().includes(chunk.toLowerCase());
+}
 
 /* Блок с надписью "Загрузка" */
 const loadingBlock = homeworkContainer.querySelector('#loading-block');
@@ -67,8 +89,48 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-retryButton.addEventListener('click', () => {});
+let towns = [];
 
-filterInput.addEventListener('input', function () {});
+retryButton.addEventListener('click', () => {
+  tryToLoad();
+});
+
+filterInput.addEventListener('input', function () {
+  updateFilter(this.value);
+});
+
+loadingFailedBlock.style.display = 'none';
+filterBlock.style.display = 'none';
+
+async function tryToLoad() {
+  loadingBlock.style.display = 'block';
+  loadingFailedBlock.style.display = 'none';
+  try {
+    towns = await loadTowns();
+    loadingBlock.style.display = 'none';
+    filterBlock.style.display = 'block';
+  } catch (e) {
+    loadingBlock.style.display = 'none';
+    loadingFailedBlock.style.display = 'block';
+  }
+}
+
+function updateFilter(filterValue) {
+  filterResult.innerHTML = '';
+
+  const fragment = document.createDocumentFragment();
+
+  for (const town of towns) {
+    if (filterValue && isMatching(town.name, filterValue)) {
+      const townDiv = document.createElement('div');
+      townDiv.textContent = town.name;
+      fragment.append(townDiv);
+    }
+  }
+
+  filterResult.append(fragment);
+}
+
+tryToLoad();
 
 export { loadTowns, isMatching };
