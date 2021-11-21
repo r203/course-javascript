@@ -1,3 +1,4 @@
+import { loadAndSortTowns } from './functions';
 /*
  Страница должна предварительно загрузить список городов из
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
@@ -40,27 +41,8 @@ const homeworkContainer = document.querySelector('#app');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-  const url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-
-  return fetch(url)
-    .then((response) => {
-      const json = response.json();
-      return json;
-    })
-    .then((towns) => {
-      towns.sort((a, b) => {
-        if (a.name > b.name) {
-          return 1;
-        }
-        if (a.name < b.name) {
-          return -1;
-        }
-        return 0;
-      });
-      return towns;
-    });
+  return loadAndSortTowns();
 }
-
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
  Проверка должна происходить без учета регистра символов
