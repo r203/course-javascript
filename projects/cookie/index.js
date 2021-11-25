@@ -16,7 +16,7 @@
  7.3: На странице должно быть текстовое поле для фильтрации cookie
  В таблице должны быть только те cookie, в имени или значении которых, хотя бы частично, есть введенное значение
  Если в поле фильтра пусто, то должны выводиться все доступные cookie
- Если добавляемая cookie не соответствует фильтру, то она должна быть добавлена только в браузер, но не в таблицу
+ Если доавбляемая cookie не соответствует фильтру, то она должна быть добавлена только в браузер, но не в таблицу
  Если добавляется cookie, с именем уже существующей cookie и ее новое значение не соответствует фильтру,
  то ее значение должно быть обновлено в браузере, а из таблицы cookie должна быть удалена
 
@@ -45,8 +45,80 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('input', function () {});
+const cookies = document.cookie.split('; ').reduce((prev, current) => {
+  const [name, value] = current.split('=');
+  prev[name] = value;
+  return prev;
+}, {});
 
-addButton.addEventListener('click', () => {});
+function createElement(name, value) {
+  //TODO если поля пустые не создавать или уже есть такое имя не создавать
+  const tr = document.createElement('tr');
+  const row = `
+       <tr>
+         <td>${name}</td>
+         <td>${value}</td>
+         <td><button>удалить</button></td>
+       </tr>
+       `;
+  tr.innerHTML = row;
+  listTable.appendChild(tr);
+}
 
-listTable.addEventListener('click', (e) => {});
+function deleteCookie(name) {
+  document.cookie = `${name}=${name}; max-age=-1`;
+}
+
+function refreshTable() {
+  listTable.innerHTML = '';
+
+  for (const cookie in cookies) {
+    createElement(cookie, cookies[cookie]);
+  }
+}
+
+function isMatching(full, chunk) {
+  return full.toLowerCase().includes(chunk.toLowerCase());
+}
+
+function updateFilter(filterValue) {
+  listTable.innerHTML = '';
+
+  for (const cookie in cookies) {
+    if (isMatching(cookies[cookie], filterValue) || isMatching(cookie, filterValue)) {
+      createElement(cookie, cookies[cookie]);
+    }
+  }
+}
+
+filterNameInput.addEventListener('input', function () {
+  if (this.value === '') {
+    refreshTable();
+  }
+  updateFilter(this.value);
+});
+
+addButton.addEventListener('click', () => {
+  if (addNameInput.value !== '' && addValueInput.value !== '') {
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+    createElement(addNameInput.value, addValueInput.value);
+
+    addNameInput.value = '';
+    addValueInput.value = '';
+  }
+});
+
+listTable.addEventListener('click', (e) => {
+  if (e.target.tagName === 'BUTTON') {
+    const targetRow = e.target.closest('tr');
+    const targerNameObj = targetRow.firstElementChild.innerHTML;
+    deleteCookie(targerNameObj);
+    targetRow.remove();
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.cookie) {
+    refreshTable();
+  }
+});
