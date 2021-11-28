@@ -26,13 +26,13 @@
 import './cookie.html';
 
 /*
- app - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
+app - это контейнер для всех ваших домашних заданий
+Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
 
- Пример:
-   const newDiv = document.createElement('div');
-   homeworkContainer.appendChild(newDiv);
- */
+Пример:
+const newDiv = document.createElement('div');
+homeworkContainer.appendChild(newDiv);
+*/
 const homeworkContainer = document.querySelector('#app');
 // текстовое поле для фильтрации cookie
 const filterNameInput = homeworkContainer.querySelector('#filter-name-input');
@@ -45,66 +45,43 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+let filterValue = '';
+
 const cookies = document.cookie.split('; ').reduce((prev, current) => {
   const [name, value] = current.split('=');
   prev[name] = value;
   return prev;
 }, {});
 
-function createElement(name, value) {
-  //TODO если поля пустые не создавать или уже есть такое имя не создавать
-  const tr = document.createElement('tr');
-  const row = `
-       <tr>
-         <td>${name}</td>
-         <td>${value}</td>
-         <td><button>удалить</button></td>
-       </tr>
-       `;
-  tr.innerHTML = row;
-  listTable.appendChild(tr);
-}
+updateTable();
 
 function deleteCookie(name) {
   document.cookie = `${name}=${name}; max-age=-1`;
-}
-
-function refreshTable() {
-  listTable.innerHTML = '';
-
   for (const cookie in cookies) {
-    createElement(cookie, cookies[cookie]);
-  }
-}
-
-function isMatching(full, chunk) {
-  return full.toLowerCase().includes(chunk.toLowerCase());
-}
-
-function updateFilter(filterValue) {
-  listTable.innerHTML = '';
-
-  for (const cookie in cookies) {
-    if (isMatching(cookies[cookie], filterValue) || isMatching(cookie, filterValue)) {
-      createElement(cookie, cookies[cookie]);
+    if (name === cookie) {
+      delete cookies[cookie];
     }
   }
+  updateTable();
 }
 
 filterNameInput.addEventListener('input', function () {
-  if (this.value === '') {
-    refreshTable();
-  }
-  updateFilter(this.value);
+  filterValue = this.value;
+  updateTable();
 });
 
 addButton.addEventListener('click', () => {
-  if (addNameInput.value !== '' && addValueInput.value !== '') {
-    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
-    createElement(addNameInput.value, addValueInput.value);
+  const name = encodeURIComponent(addNameInput.value.trim());
+  const value = encodeURIComponent(addValueInput.value.trim());
+
+  if (name !== '' && value !== '') {
+    document.cookie = `${name}=${value}`;
+    cookies[name] = value;
 
     addNameInput.value = '';
     addValueInput.value = '';
+
+    updateTable();
   }
 });
 
@@ -113,12 +90,30 @@ listTable.addEventListener('click', (e) => {
     const targetRow = e.target.closest('tr');
     const targerNameObj = targetRow.firstElementChild.innerHTML;
     deleteCookie(targerNameObj);
-    targetRow.remove();
   }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.cookie) {
-    refreshTable();
+function updateTable() {
+  listTable.innerHTML = '';
+
+  for (const cookie in cookies) {
+    if (
+      filterValue &&
+      !cookie.toLowerCase().includes(filterValue.toLowerCase()) &&
+      !cookies[cookie].toLowerCase().includes(filterValue.toLowerCase())
+    ) {
+      continue;
+    }
+
+    const tr = document.createElement('tr');
+    const row = `
+      <tr>
+        <td>${cookie}</td>
+        <td>${cookies[cookie]}</td>
+        <td><button>удалить</button></td>
+      </tr>
+      `;
+    tr.innerHTML = row;
+    listTable.appendChild(tr);
   }
-});
+}
