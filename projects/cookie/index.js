@@ -16,7 +16,7 @@
  7.3: На странице должно быть текстовое поле для фильтрации cookie
  В таблице должны быть только те cookie, в имени или значении которых, хотя бы частично, есть введенное значение
  Если в поле фильтра пусто, то должны выводиться все доступные cookie
- Если доавбляемая cookie не соответствует фильтру, то она должна быть добавлена только в браузер, но не в таблицу
+ Если добавляемая cookie не соответствует фильтру, то она должна быть добавлена только в браузер, но не в таблицу
  Если добавляется cookie, с именем уже существующей cookie и ее новое значение не соответствует фильтру,
  то ее значение должно быть обновлено в браузере, а из таблицы cookie должна быть удалена
 
@@ -47,11 +47,13 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 let filterValue = '';
 
-const cookies = document.cookie.split('; ').reduce((prev, current) => {
-  const [name, value] = current.split('=');
-  prev[name] = value;
-  return prev;
-}, {});
+const cookies = document.cookie
+  ? document.cookie.split('; ').reduce((prev, current) => {
+      const [name, value] = current.split('=');
+      prev[name] = value;
+      return prev;
+    }, {})
+  : {};
 
 updateTable();
 
