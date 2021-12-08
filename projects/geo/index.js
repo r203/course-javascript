@@ -47,26 +47,60 @@ document.addEventListener('DOMContentLoaded', function() {
         groupByCoordinates: true
       });
 
+      document.addEventListener('click', function(e) {
+        const target = e.target;
+        
+        if(target.className === 'review-form__btn') {
+          let review = {
+                name : document.querySelector('#name').value.trim(),
+                place : document.querySelector('#place').value.trim(),
+                review : document.querySelector('#review').value.trim(),
+                latitude: coords[0],
+                longitude: coords[1]
+              };
+  
+            storage.add(review);
+            reviews.push(review);
+  
+            let placemark = new ymaps.Placemark([coords[0], coords[1]], {});
+            clusterer.add(placemark);
+            myMap.geoObjects.add(clusterer);
+            myMap.balloon.close();
+  
+            // placemark.events.add('click', function(e) {
+            //   openBallon(e);
+            // })
+  
+            // clusterer.events.add('click', function (e) {
+            //   openBallon(e);
+            // });
+            
+            
+        }
+      });
+
+      clusterer.events.add('click', function (e) {
+        openBallon(e);
+      });
+
       storage.getAll().forEach((item) => {
         reviews.push(item);
         let placemark = new ymaps.Placemark([item.latitude, item.longitude], {});
         clusterer.add(placemark);
         myMap.geoObjects.add(clusterer);
 
-        placemark.events.add('click', function(e) {
-          openBallon(e);
-        });
+        // placemark.events.add('click', function(e) {
+        //   openBallon(e);
+        // });
 
-        clusterer.events.add('click', function (e) {
-          openBallon(e);
-        });
+
       });
 
       function openBallon(e) {
-        let [currentLatitude, currentLongitude] = e.get('target').geometry.getCoordinates();
+        // let [currentLatitude, currentLongitude] = e.get('target').geometry.getCoordinates();
         coords = e.get('target').geometry.getCoordinates();
 
-        const findReviews = reviews.filter(review => currentLatitude === review.latitude) || (currentLongitude === review.longitude);
+        const findReviews = reviews.filter(review => coords[0] === review.latitude) || (coords[1] === review.longitude);
         const html = reviewTemplate({findReviews});
         myMap.balloon.open(e.get('target').geometry.getCoordinates(), {
           contentBody: html + balloonContent
@@ -80,37 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
           contentBody: balloonContent
         });
 
-        document.addEventListener('click', function(e) {
-          const target = e.target;
-          
-          if(target.className === 'review-form__btn') {
-            let review = {
-                  name : document.querySelector('#name').value.trim(),
-                  place : document.querySelector('#place').value.trim(),
-                  review : document.querySelector('#review').value.trim(),
-                  latitude: coords[0],
-                  longitude: coords[1]
-                };
 
-              storage.add(review);
-              reviews.push(review);
-
-              let placemark = new ymaps.Placemark([coords[0], coords[1]], {});
-              clusterer.add(placemark);
-              myMap.geoObjects.add(clusterer);
-              myMap.balloon.close();
-
-              placemark.events.add('click', function(e) {
-                openBallon(e);
-              })
-
-              clusterer.events.add('click', function (e) {
-                openBallon(e);
-              });
-              
-              
-          }
-        });
       });
 
       
