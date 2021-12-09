@@ -32,10 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
       '<div>'
     ].join('');
   
-
   ymaps.ready(init);
   function init(){
-
       var myMap = new ymaps.Map("map", {
           center: [55.76, 37.64],
           zoom: 7
@@ -66,16 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
             clusterer.add(placemark);
             myMap.geoObjects.add(clusterer);
             myMap.balloon.close();
-  
-            // placemark.events.add('click', function(e) {
-            //   openBallon(e);
-            // })
-  
-            // clusterer.events.add('click', function (e) {
-            //   openBallon(e);
-            // });
-            
-            
         }
       });
 
@@ -88,16 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let placemark = new ymaps.Placemark([item.latitude, item.longitude], {});
         clusterer.add(placemark);
         myMap.geoObjects.add(clusterer);
-
-        // placemark.events.add('click', function(e) {
-        //   openBallon(e);
-        // });
-
-
       });
 
       function openBallon(e) {
-        // let [currentLatitude, currentLongitude] = e.get('target').geometry.getCoordinates();
         coords = e.get('target').geometry.getCoordinates();
 
         const findReviews = reviews.filter(review => coords[0] === review.latitude) || (coords[1] === review.longitude);
@@ -113,10 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
         myMap.balloon.open(coords, {
           contentBody: balloonContent
         });
-
-
       });
-
-      
   }
 });
