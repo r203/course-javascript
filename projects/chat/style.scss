@@ -14,9 +14,10 @@ img {
   vertical-align: middle;
   font-size: 0;
 }
+
 .popup {
   z-index: 3;
-  display: none; //block
+  display: block; //none
   padding-top: 100px;
   position: fixed;
   left: 0;
@@ -45,8 +46,13 @@ img {
   color: #fff;
 
   &__logo {
-    width: 50px;
-    height: 50px;
+    width: 139px;
+    height: 139px;
+    background-image: url(./images/Group1.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-bottom: 39px;
   }
 
   &__title {
@@ -73,6 +79,58 @@ img {
   }
 
 
+}
+
+.addphoto {
+  position: relative;
+
+  &__header {
+    margin-bottom: 39px;
+  }
+
+  &__title {
+    font-size: 18px;
+    color: #fff;
+  }
+
+  .close {
+    position: absolute;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 900;
+    top: -10px;
+    right: -10px;
+    color: #747E87;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+  }
+
+  &__photo-wrap {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    background-color: #232F3D;
+    background-image: url(./images/Vector.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 15px;
+
+    span {
+      font-size: 9px;
+      text-align: center;
+      color: #747E87;
+      position: relative;
+      top: -36px;
+    }
+  }
+
+  &__username {
+    font-size: 20px;
+    color: #fff;
+  }
 }
 
 input {
@@ -151,6 +209,8 @@ input {
     border-radius: 50%;
     border: 2px solid #6C7982;
     margin-right: 9px;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 
   &__info {
@@ -201,6 +261,25 @@ input {
 
   &__body {
     flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar{
+      width: 7px;
+      background: #182633;
+    }
+
+    &::-webkit-scrollbar-thumb{
+      width: 7px;
+      background: #2B5279;
+      border-radius: 3px;
+    }
+
+    li {
+      color: #fff;
+      list-style: none;
+      font-size: 12px;
+    }
   }
 
   &__footer {
@@ -211,4 +290,83 @@ input {
     background-color: #17212B;
     padding: 0 10px;
   }
+
+  &__message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 50px;
+
+    &.service {
+      color: #5B6774;
+    }
+
+    &.own-message {
+      align-items: flex-end;
+      padding-right: 50px;
+      padding-left: 0px;
+
+      .chat__img {
+        right: -10px;
+        left: unset;
+      }
+
+      .chat__text-wrap {
+        background-color: #2B5279;
+      }
+    }
+  }
+
+  &__name {
+    font-size: 12px;
+    color: #5387C1;
+    margin-bottom: 8px;
+  }
+
+  &__text-wrap {
+    background-color: #182633;
+    width: max-content;
+    padding: 15px 10px;
+    border-radius: 7px;
+    display: flex;
+  }
+
+  &__text {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+
+  &__time {
+    color: #7F91A4;
+    font-size: 14px;
+    position: relative;
+    top: 10px;
+  }
+
+  &__img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid #6C7982;
+    margin-right: 9px;
+    position: absolute;
+    top: 20px;
+    left: -10px;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+}
+
+.hide {
+  display: none;
+}
+
+.test {
+  position: fixed;
+  background-color: rgb(37, 63, 87);
+  width: 200px;
+  height: 100px;
+  top: 20px;
+  right: 200px;
 }
